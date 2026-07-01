@@ -3,11 +3,16 @@ import "./mayer.css";
 
 const BASE = import.meta.env.BASE_URL;
 
-const CAR_SLIDES = [
+const CAR_SLIDES: { src: string; label: string; type?: "image" | "video" }[] = [
   { src: `${BASE}images/car-hilux.png`,   label: "Toyota Hilux" },
   { src: `${BASE}images/car-fit.png`,     label: "Honda Fit" },
   { src: `${BASE}images/car-mgzs.png`,    label: "MG ZS" },
   { src: `${BASE}images/car-sportage.png`,label: "Kia Sportage" },
+  {
+    src: "https://res.cloudinary.com/dw191in7j/video/upload/v1782757979/VIDOEO_1_qhzhbi.mov",
+    label: "Video Lubricentro Mayer",
+    type: "video",
+  },
 ];
 
 const BRAND_LIST = [
@@ -52,11 +57,12 @@ export function LandingPage() {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    const duration = CAR_SLIDES[activeBg]?.type === "video" ? 9000 : 5000;
+    const timer = setTimeout(() => {
       setActiveBg((prev) => (prev + 1) % CAR_SLIDES.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    }, duration);
+    return () => clearTimeout(timer);
+  }, [activeBg]);
 
   return (
     <div className="min-h-screen bg-[#0a1128] text-white font-inter selection:bg-[#ff007f] selection:text-white">
@@ -82,15 +88,29 @@ export function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-[#0a1128] via-[#0a1128]/75 to-[#0a1128]/40 z-10" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a1128] via-transparent to-[#0a1128]/60 z-10" />
           {/* Crossfade slideshow */}
-          {CAR_SLIDES.map((slide, i) => (
-            <img
-              key={slide.src}
-              src={slide.src}
-              alt={slide.label}
-              className="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-opacity duration-[2000ms] ease-in-out"
-              style={{ opacity: i === activeBg ? 0.45 : 0 }}
-            />
-          ))}
+          {CAR_SLIDES.map((slide, i) =>
+            slide.type === "video" ? (
+              <video
+                key={slide.src}
+                src={slide.src}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="none"
+                className="absolute inset-0 w-full h-full object-cover object-[center_-25%] scale-105 transition-opacity duration-[2000ms] ease-in-out"
+                style={{ opacity: i === activeBg ? 0.45 : 0 }}
+              />
+            ) : (
+              <img
+                key={slide.src}
+                src={slide.src}
+                alt={slide.label}
+                className="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-opacity duration-[2000ms] ease-in-out"
+                style={{ opacity: i === activeBg ? 0.45 : 0 }}
+              />
+            )
+          )}
           {/* Subtle Ken Burns scale on active slide via inline keyframe */}
           <style>{`
             @keyframes kbzoom { from { transform: scale(1.05); } to { transform: scale(1.12); } }
