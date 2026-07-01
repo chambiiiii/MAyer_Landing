@@ -1,0 +1,57 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/syncopate/400.css";
+@import "@fontsource/syncopate/700.css";
+
+.font-syncopate {
+  font-family: 'Syncopate', sans-serif;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+.glass-panel {
+  background: rgba(10, 17, 40, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 86, 179, 0.3);
+}
+
+.clip-path-slant {
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
+}
+
+@keyframes marquee-track {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-track {
+  animation: marquee-track 30s linear infinite;
+  width: max-content;
+}
