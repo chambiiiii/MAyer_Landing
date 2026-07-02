@@ -39,6 +39,9 @@ const BRAND_LIST = [
 export function LandingPage() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [activeBg, setActiveBg] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [showTopBtn, setShowTopBtn] = useState(false);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver((entries) => {
@@ -64,22 +67,71 @@ export function LandingPage() {
     return () => clearTimeout(timer);
   }, [activeBg]);
 
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      setShowTopBtn(window.scrollY > 600);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0a1128] text-white font-inter selection:bg-[#ff007f] selection:text-white">
       {/* Navigation */}
-      <nav className="fixed w-full z-50 glass-panel border-b-0 border-t-0 border-l-0 border-r-0 border-b border-[#0056b3]/30">
-        <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+      <nav
+        className={`fixed w-full z-50 glass-panel border-b-0 border-t-0 border-l-0 border-r-0 border-b border-[#0056b3]/30 transition-all duration-300 ${
+          scrolled ? "shadow-lg shadow-black/20" : ""
+        }`}
+      >
+        <div
+          className={`max-w-7xl mx-auto px-6 flex items-center justify-between transition-all duration-300 ${
+            scrolled ? "h-16" : "h-24"
+          }`}
+        >
           <img
             src={`${BASE}images/mayer-logo.png`}
             alt="Lubricentro y Servicios Mayer"
-            className="h-20 w-auto"
+            className={`w-auto transition-all duration-300 ${scrolled ? "h-12" : "h-20"}`}
           />
           <div className="hidden md:flex gap-8 text-sm font-medium tracking-wide">
-            <a href="#servicios" className="hover:text-[#ff007f] transition-colors">SERVICIOS</a>
-            <a href="#nosotros" className="hover:text-[#ff007f] transition-colors">NOSOTROS</a>
-            <a href="#contacto" className="hover:text-[#ff007f] transition-colors">CONTACTO</a>
+            <a href="#servicios" className="nav-link hover:text-[#ff007f] transition-colors">SERVICIOS</a>
+            <a href="#nosotros" className="nav-link hover:text-[#ff007f] transition-colors">NOSOTROS</a>
+            <a href="#contacto" className="nav-link hover:text-[#ff007f] transition-colors">CONTACTO</a>
           </div>
-          <a href="https://wa.me/56952137332" target="_blank" rel="noreferrer" className="hidden md:inline-block bg-[#0056b3] hover:bg-[#ff007f] text-white px-6 py-2 rounded-sm font-bold transition-all duration-300 transform hover:-translate-y-1">AGENDA TU HORA</a>
+          <a href="https://wa.me/56952137332" target="_blank" rel="noreferrer" className="btn-shine hidden md:inline-block bg-[#0056b3] hover:bg-[#ff007f] text-white px-6 py-2 rounded-sm font-bold transition-all duration-300 transform hover:-translate-y-1">AGENDA TU HORA</a>
+          <button
+            type="button"
+            aria-label="Abrir menú"
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            className="md:hidden flex flex-col justify-center items-center gap-1.5 w-10 h-10 shrink-0"
+          >
+            <span className={`block h-0.5 w-7 bg-white transition-all duration-300 ${mobileMenuOpen ? "rotate-45 translate-y-2" : ""}`} />
+            <span className={`block h-0.5 w-7 bg-white transition-all duration-300 ${mobileMenuOpen ? "opacity-0" : ""}`} />
+            <span className={`block h-0.5 w-7 bg-white transition-all duration-300 ${mobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          </button>
+        </div>
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out bg-[#0a1128]/95 backdrop-blur-md border-t border-[#0056b3]/30 ${
+            mobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="flex flex-col px-6 py-4 gap-4 text-sm font-medium tracking-wide">
+            <a href="#servicios" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#ff007f] transition-colors">SERVICIOS</a>
+            <a href="#nosotros" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#ff007f] transition-colors">NOSOTROS</a>
+            <a href="#contacto" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#ff007f] transition-colors">CONTACTO</a>
+            <a
+              href="https://wa.me/56952137332"
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn-shine inline-block text-center bg-[#0056b3] hover:bg-[#ff007f] text-white px-6 py-2 rounded-sm font-bold transition-all duration-300"
+            >
+              AGENDA TU HORA
+            </a>
+          </div>
         </div>
       </nav>
       {/* Hero Section */}
@@ -143,7 +195,7 @@ export function LandingPage() {
                 TALLER ESPECIALIZADO
               </div>
               <h1 className="font-syncopate text-4xl md:text-6xl font-bold leading-tight mb-6">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0056b3] to-[#ff007f]">RENDIMIENTO</span> Y CUIDADO DE TU MOTOR
+                <span className="animate-gradient-text text-transparent bg-clip-text bg-gradient-to-r from-[#0056b3] via-[#ff007f] to-[#0056b3]">RENDIMIENTO</span> Y CUIDADO DE TU MOTOR
               </h1>
               <p className="text-lg md:text-xl text-gray-300 mb-4 max-w-lg leading-relaxed font-light">
                 En Lubricentro y Servicios Mayer nos encargamos de que tu vehículo rinda al 100%. Tecnología, precisión y confianza en cada mantenimiento.
@@ -173,7 +225,7 @@ export function LandingPage() {
         </div>
       </section>
       {/* Services Section */}
-      <section id="servicios" className="py-24 bg-white relative overflow-hidden">
+      <section id="servicios" className="scroll-mt-20 py-24 bg-white relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#0056b3]/40 to-transparent" />
           <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#ff007f]/30 to-transparent" />
@@ -196,7 +248,7 @@ export function LandingPage() {
             {([
               {
                 tag: "DIAGNÓSTICO",
-                name: "Diagnóstico Vehicular\nvia Software",
+                name: "Diagnóstico Vehicular\nvia Scanner",
                 accent: "#ff007f",
                 icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
@@ -215,12 +267,66 @@ export function LandingPage() {
                 )
               },
               {
-                tag: "FILTROS",
-                name: "Cambio de\nFiltros de Aire",
+                tag: "TRANSMISIÓN",
+                name: "Cambio de Aceite de\nTransmisión Automática/Mecánica",
+                accent: "#0056b3",
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+                    <path d="M12 2.5v6"/>
+                    <circle cx="12" cy="2.5" r="1.4" fill="currentColor" stroke="none"/>
+                    <path d="M6.5 8.5h11l-1.2 3.5h-8.6z"/>
+                    <path d="M7.5 12v4M12 12v6M16.5 12v4"/>
+                    <path d="M4.5 21.5h15"/>
+                  </svg>
+                )
+              },
+              {
+                tag: "DIFERENCIAL",
+                name: "Inspección de\nFluido Diferencial",
                 accent: "#ff007f",
                 icon: (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
-                    <path d="M5 8c0-1.1.9-2 2-2h10a2 2 0 012 2v2H5V8z"/><rect x="3" y="10" width="18" height="8" rx="1"/><path d="M7 14h.01M12 14h.01M17 14h.01"/>
+                    <circle cx="9" cy="12" r="6.5"/>
+                    <circle cx="9" cy="12" r="2"/>
+                    <path d="M9 3.7v1.8M9 16.5v1.8M2.7 12h1.8M13.5 12h1.8M4.4 6.4l1.3 1.3M12.3 16.3l1.3 1.3M4.4 17.6l1.3-1.3M12.3 7.7l1.3-1.3"/>
+                    <circle cx="19" cy="12" r="2.3"/>
+                    <path d="M15.5 12h1.2"/>
+                  </svg>
+                )
+              },
+              {
+                tag: "COMBUSTIBLE",
+                name: "Cambio de\nFiltro de Combustible",
+                accent: "#ff007f",
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+                    <path d="M12 3c2.75 0 5.46.23 8.08.68.53.09.92.56.92 1.1v1.04a2.25 2.25 0 01-.66 1.59l-5.43 5.43a2.25 2.25 0 00-.66 1.59v2.93a2.25 2.25 0 01-1.24 2.01L9.75 21v-6.57a2.25 2.25 0 00-.66-1.59L3.66 7.41A2.25 2.25 0 013 5.82V4.77c0-.54.38-1.01.92-1.1A48.32 48.32 0 0112 3z"/>
+                  </svg>
+                )
+              },
+              {
+                tag: "FILTROS",
+                name: "Cambio de\nFiltros de Aire",
+                accent: "#0056b3",
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+                    <path d="M6 20V9a3 3 0 013-3h1V4h4v2h1a3 3 0 013 3v11"/>
+                    <path d="M4 20h16"/>
+                    <path d="M9 20v-4h6v4"/>
+                    <path d="M9 13h.01M12 13h.01M15 13h.01M9 10h.01M12 10h.01M15 10h.01"/>
+                  </svg>
+                )
+              },
+              {
+                tag: "A/C",
+                name: "Cambio de\nFiltro de Polen",
+                accent: "#ff007f",
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+                    <path d="M12 12h6.5a2.5 2.5 0 10-2.5-2.5"/>
+                    <path d="M12 12v6.5a2.5 2.5 0 102.5-2.5"/>
+                    <path d="M12 12H5.5A2.5 2.5 0 108 14.5"/>
+                    <path d="M3 8h4M3 12h1M3 16h4M17 20h4M20 5v4M20 15v4"/>
                   </svg>
                 )
               },
@@ -235,36 +341,21 @@ export function LandingPage() {
                 )
               },
               {
-                tag: "NEUMÁTICOS",
-                name: "Rotación de\nNeumáticos",
-                accent: "#ff007f",
-                icon: (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
-                    <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.64 5.64l2.12 2.12M16.24 16.24l2.12 2.12M5.64 18.36l2.12-2.12M16.24 7.76l2.12-2.12"/>
-                  </svg>
-                )
-              },
-              {
                 tag: "INSPECCIÓN",
                 name: "Diagnóstico de\nPartes y Piezas",
                 accent: "#0056b3",
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
-                    <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8">
+                    <path fillRule="evenodd" d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" clipRule="evenodd"/>
                   </svg>
                 )
               },
             ] as Array<{tag: string; name: string; accent: string; icon: React.ReactNode}>).map((svc, i) => (
               <div
                 key={i}
-                className="group relative rounded-2xl p-6 cursor-default overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                className={`scroll-animate opacity-0 delay-${(i % 3) * 100} group relative rounded-2xl p-6 cursor-default overflow-hidden card-lift`}
                 style={{ background: 'rgba(255,255,255,1)', border: '1px solid rgba(10,17,40,0.1)', boxShadow: '0 2px 16px rgba(10,17,40,0.07)' }}
               >
-                {/* Hover glow */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
-                  style={{ background: `radial-gradient(circle at 50% 0%, ${svc.accent}18 0%, transparent 70%)` }}
-                />
                 {/* Top accent line */}
                 <div
                   className="absolute top-0 left-6 right-6 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -272,7 +363,7 @@ export function LandingPage() {
                 />
                 {/* Icon */}
                 <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-colors duration-300"
+                  className="icon-pop w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-colors duration-300"
                   style={{ background: `${svc.accent}1a`, color: svc.accent }}
                 >
                   {svc.icon}
@@ -291,7 +382,7 @@ export function LandingPage() {
         </div>
       </section>
       {/* About Section */}
-      <section id="nosotros" className="py-28 bg-[#0a1128] relative overflow-hidden">
+      <section id="nosotros" className="scroll-mt-20 py-28 bg-[#0a1128] relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#0056b3]/40 to-transparent" />
@@ -427,7 +518,7 @@ export function LandingPage() {
         </div>
       </section>
       {/* CTA / Contact Section */}
-      <section id="contacto" className="py-24 bg-[#f4f5f7] relative overflow-hidden">
+      <section id="contacto" className="scroll-mt-20 py-24 bg-[#f4f5f7] relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#ff007f]/40 to-transparent" />
           <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-[#ff007f]/5 blur-3xl" />
@@ -519,7 +610,7 @@ export function LandingPage() {
                 href="https://www.google.com/maps?client=safari&rls=en&oe=UTF-8&um=1&ie=UTF-8&fb=1&gl=cl&sa=X&geocode=Kf828SpJqVqRMYTnhPC4zQV6&daddr=Los+Misioneros+818,+1030214+Arica,+Arica+y+Parinacota"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center gap-3 w-full bg-[#0056b3] hover:bg-[#ff007f] text-white py-4 font-bold tracking-wider transition-all duration-300 rounded-xl text-lg"
+                className="btn-shine flex items-center justify-center gap-3 w-full bg-[#0056b3] hover:bg-[#ff007f] text-white py-4 font-bold tracking-wider transition-all duration-300 rounded-xl text-lg transform hover:-translate-y-1"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                   <path fillRule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
@@ -553,6 +644,19 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
+      {/* Back to top */}
+      <button
+        type="button"
+        aria-label="Volver arriba"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className={`fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-[#0056b3] hover:bg-[#ff007f] text-white flex items-center justify-center shadow-lg transition-all duration-300 animate-float ${
+          showTopBtn ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
+        }`}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+          <path fillRule="evenodd" d="M11.47 4.72a.75.75 0 011.06 0l7.5 7.5a.75.75 0 11-1.06 1.06l-6.22-6.22V21a.75.75 0 01-1.5 0V7.06l-6.22 6.22a.75.75 0 11-1.06-1.06l7.5-7.5z" clipRule="evenodd" />
+        </svg>
+      </button>
     </div>
   );
 }
