@@ -634,7 +634,7 @@ export function LandingPage() {
           </div>
           <div className="text-gray-400 text-sm md:text-center">
             <p className="mb-1">Horario de atención</p>
-            <p className="font-bold text-gray-300">Lun–Vie 09:00–19:00 · Sáb 09:00–14:00</p>
+            <p className="font-bold text-gray-300">Lun–Vie 09:00–18:00 · Sáb 09:00–14:00</p>
             <p className="text-[#ff007f] font-bold text-sm mt-0.5">Domingo cerrado</p>
           </div>
           <div className="text-gray-500 text-sm md:text-right">
